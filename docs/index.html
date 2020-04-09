@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Whiteboard</title>
+    <meta name="description" content="A standalone JavaScript backed web based whiteboard. As long as your browser or device supports canvas provide an ID to an element on your page and it will be transformed into a whiteboard.">
+    <meta name="author" content="Caboodle Tech Inc">
+    <!-- The next 3 files are required for Whiteboard to work. -->
+    <link rel="stylesheet" href="css/katex.css">
+    <script src="js/whiteboard.js"></script>
+    <script src="js/katex.min.js"></script>
+    <!-- THESE STYLES ARE FOR THE DEMO ONLY. -->
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        #page-wrapper {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- You need one element on the page with an ID we can inject the whiteboard into. -->
+    <div id="page-wrapper">
+        <!-- This area will be filled with the whiteboard content. -->
+    </div>
+    <!-- You then need to create a new instance of Whiteboard and initialize it by passing your ID into the init() method. -->
+    <script type="text/javascript">
+        var board = new Whiteboard();
+        board.init( 'page-wrapper' );
+    </script>
+</body>
+</html>
