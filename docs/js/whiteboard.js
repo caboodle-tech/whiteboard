@@ -360,7 +360,9 @@ var Whiteboard = function(){
 
         // Add secondary control listeners.
         elems.minusSizeBtn.addEventListener( 'click', decreaseLine );
+        elems.minusSizeBtn.addEventListener( 'touchstart', decreaseLine );
         elems.plusSizeBtn.addEventListener( 'click', increaseLine );
+        elems.plusSizeBtn.addEventListener( 'touchstart', increaseLine );
         elems.trashBtn.addEventListener( 'click', resetLayer );
 
         // Add interactive listeners.
@@ -375,11 +377,19 @@ var Whiteboard = function(){
         elems.canvas.addEventListener( 'mouseover', mouseOver );
         elems.canvas.addEventListener( 'mouseup', mouseUp );
 
+        // Add whiteboard touch listeners.
+        elems.canvas.addEventListener( 'touchstart', touchStart, { passive: true } );
+        elems.canvas.addEventListener( 'touchend', touchEnd, { passive: true } );
+        elems.canvas.addEventListener( 'touchmove', touchMove, { passive: true } );
+
         // Add key listener to the document.
         document.addEventListener( 'keyup', respondToKey );
 
         // Add a resize listener to the window.
         window.addEventListener( 'resize', updateDimensions );
+
+        // Disable move events on touch (mobile) devices.
+        document.body.addEventListener( 'touchmove', disablePageMove, { passive: false } );
     };
 
     /**
@@ -476,7 +486,7 @@ var Whiteboard = function(){
             }
         }
         // Visual show the user the change.
-        updateCursor();
+        updateCursor( true );
     };
 
 
@@ -489,6 +499,15 @@ var Whiteboard = function(){
         var elem = event.target || event.srcElement;
         elem = elem.closest('.wb-interact-element');
         elem.parentNode.removeChild( elem );
+    };
+
+    /**
+     * Disable page move on touch (mobile) devices.
+     *
+     * @private
+     */
+    var disablePageMove = function(){
+        event.preventDefault();
     };
 
     /**
@@ -568,7 +587,8 @@ var Whiteboard = function(){
                 state.eraserWidth  = 65;
             }
         }
-        updateCursor();
+        // Visual show the user the change.
+        updateCursor( true );
     };
 
     /**
@@ -593,7 +613,7 @@ var Whiteboard = function(){
      */
     var mouseMove = function(){
 
-        elems.lastMouseEvent = event;
+        state.lastMouseEvent = event;
 
         updateCursor();
 
@@ -1003,29 +1023,96 @@ var Whiteboard = function(){
     };
 
     /**
-     * The user changed the pen size so update the visual cursor.
+     * Respond to the end of a touch event; touch version of mouseUp().
+     *
+     * @return {[type]} [description]
+     */
+    var touchEnd = function(){
+        state.touch = false;
+        state.lastTouchEvent = event;
+    };
+
+    /**
+     * Respond to the start of a touch event on the whiteboard; touch version or mouseDown().
      *
      * @private
      */
-    var updateCursor = function(){
-        if( state.hasFocus == true  && (  state.drawing == true ||  state.erasing == true ) ){
-            var adjust = 0;
-            var style = 'position: absolute; pointer-events: none; border: 1px solid #000; border-radius: 50%;';
-            if( state.drawing == true ){
-                style += 'width: ' + state.lineWidth + 'px;';
-                style += 'height: ' + state.lineWidth + 'px;';
-                adjust = state.lineWidth;
+    var touchStart = function(){
+        state.touch = true;
+        state.lastTouchEvent = event;
+        elems.ctx.beginPath();
+        elems.ctx.moveTo( event.touches[0].pageX, event.touches[0].pageY );
+    };
+
+    /**
+     * Respond to touch movement events; touch version of mouseMove().
+     *
+     * @return {[type]} [description]
+     */
+    var touchMove = function(){
+
+        state.lastTouchEvent = event;
+
+        updateCursor();
+
+        if( state.touch == true && (  state.drawing == true ||  state.erasing == true ) ){
+
+            // Swicth to draw or erase mode depending on what is active.
+            if( state.erasing ){
+                elems.ctx.globalCompositeOperation = 'destination-out';
+                elems.ctx.lineWidth = state.eraserWidth;
             } else {
-                style += 'width: ' + state.eraserWidth + 'px;';
-                style += 'height: ' + state.eraserWidth + 'px;';
-                adjust = state.eraserWidth;
+                elems.ctx.globalCompositeOperation = 'source-over';
+                elems.ctx.lineWidth = state.lineWidth;
             }
-            style += 'top:' + ( elems.lastMouseEvent.pageY - adjust ) + 'px;';
-            style += 'left:' + ( elems.lastMouseEvent.pageX - adjust ) + 'px;';
-            elems.cursor.setAttribute( 'style', style );
-        } else {
-            elems.cursor.setAttribute( 'style', 'display:none;' );
+
+            elems.ctx.lineTo( event.touches[0].pageX, event.touches[0].pageY );
+            elems.ctx.strokeStyle = state.color;
+            elems.ctx.stroke();
         }
+    };
+
+    /**
+     * The user changed the pen size so update the visual cursor.
+     *
+     * @private
+     * @param  {boolean} override True if this update comes from the decrease or increase line methods.
+     * @return {undefined}        Used as a short circuit.
+     */
+    var updateCursor = function( override, type ){
+        // Do default work for the new cursor size.
+        var adjust = 0;
+        var style = 'position: absolute; pointer-events: none; border: 1px solid #000; border-radius: 50%;';
+        if( state.drawing == true ){
+            style += 'width: ' + state.lineWidth + 'px;';
+            style += 'height: ' + state.lineWidth + 'px;';
+            adjust = state.lineWidth;
+        } else {
+            style += 'width: ' + state.eraserWidth + 'px;';
+            style += 'height: ' + state.eraserWidth + 'px;';
+            adjust = state.eraserWidth;
+        }
+        // If the user is activing triggering this method move the cursor to the users mouse or touch location.
+        if( ( state.hasFocus == true || state.touch == true )  && (  state.drawing == true ||  state.erasing == true ) ){
+            if( state.touch == true ){
+                style += 'top:' + ( state.lastTouchEvent.touches[0].pageY - adjust ) + 'px;';
+                style += 'left:' + ( state.lastTouchEvent.touches[0].pageX - adjust ) + 'px;';
+            } else {
+                style += 'top:' + ( state.lastMouseEvent.pageY - adjust ) + 'px;';
+                style += 'left:' + ( state.lastMouseEvent.pageX - adjust ) + 'px;';
+            }
+            elems.cursor.setAttribute( 'style', style );
+            return;
+        }
+        // The user is using the decrease and increase line buttons.
+        if( override === true ){
+            style += 'top:' + ( elems.plusSizeBtn.offsetTop + 100 ) + 'px;';
+            style += 'left:' + ( elems.plusSizeBtn.offsetLeft - 30 ) + 'px;';
+            elems.cursor.setAttribute( 'style', style );
+            return;
+        }
+        // The user is definitely out of the app hide the cursor.
+        elems.cursor.setAttribute( 'style', 'display:none;' );
     };
 
     /**
