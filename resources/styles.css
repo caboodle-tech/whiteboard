@@ -1,0 +1,282 @@
+.wb .wb-board {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20px' height='20px' viewBox='0 0 512 512'%3E%3Cpath transform='rotate(90,256,256)' d='M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z'%3E%3C/path%3E%3C/svg%3E"), auto;
+}
+
+.wb .button {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    pointer-events: all;
+    vertical-align: text-top;
+}
+
+.wb .button svg {
+    position: absolute;
+    left: 0;
+    pointer-events: none;
+}
+
+.wb .wb-second-controls {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+}
+
+.wb .wb-second-controls .button {
+    width: 25px;
+    height: 25px;
+    margin: 10px;
+}
+
+.wb .wb-second-controls .button svg {
+    width: 25px;
+    height: 25px;
+}
+
+.wb .wb-second-controls .button:after {
+    content: '';
+    position: absolute;
+    bottom: -25px;
+    width: 50px;
+    left: -10px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 14px;
+    color: #888;
+    pointer-events: none;
+    font-family: monospace;
+}
+
+.wb .wb-second-controls .wb-color-controls .button {
+    border-radius: 50%;
+    border: 2px solid #f7f7f7;
+    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.3);
+}
+
+.wb .wb-second-controls .wb-color-controls .button.palette svg {
+    fill: #757575;
+}
+
+.wb .wb-second-controls .wb-color-controls .button:hover, .wb .wb-second-controls .wb-color-controls .button.active {
+    border-radius: 0;
+}
+
+.wb .wb-second-controls .wb-color-controls, .wb .wb-second-controls .wb-size-controls, .wb .wb-second-controls .wb-trash-controls, .wb .wb-second-controls .wb-interact-controls {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.wb .wb-second-controls .wb-interact-controls .button {
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+/*============================================*/
+
+.wb .wb-color-picker {
+    position: absolute;
+    cursor: crosshair;
+    top: 90px;
+    border-radius: 50%;
+    border: 3px solid #f7f7f7;
+    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.5);
+}
+.wb .wb-color-picker-result {
+    position: absolute;
+    background-color: #000;
+    width: 50px;
+    height: 50px;
+    cursor: not-allowed;
+    top: 90px;
+    border-radius: 50%;
+    border: 3px solid #f7f7f7;
+    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.5);
+}
+
+/*============================================*/
+
+.wb .wb-interactive-area {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: 1px solid #000;
+}
+
+.wb .wb-interactive-area .wb-interact-title-bar {
+    flex: 0;
+    padding: 10px;
+}
+
+.wb .wb-interactive-area .wb-interact-title-bar .wb-interact-title {
+    display: inline-block;
+    font-size: 25px;
+    line-height: 25px;
+    float: left;
+}
+
+.wb .wb-interactive-area .wb-interact-title-bar .wb-interact-save {
+    float: right;
+}
+
+.wb .wb-interactive-area .wb-interact-title-bar .wb-interact-save svg {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.wb .wb-interactive-area .wb-interact-textarea {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    resize: none;
+    font-size: 20px;
+}
+
+
+.wb .wb-interact-element {
+    position: absolute;
+}
+
+.wb .wb-interact-element .wb-interact-element-controls {
+    display: inline-block;
+    padding: 5px;
+    border: 2px solid #f7f7f7;
+    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.3);
+}
+
+.wb .wb-interact-element .wb-interact-element-controls .button {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin: 5px 15px;
+}
+
+.wb .wb-interact-element .wb-interact-element-controls .wb-interact-element-move {
+    cursor: grab;
+}
+
+.wb .wb-interact-element .wb-interact-element-value {
+    padding: 10px;
+    font-size: 30px;
+    line-height: 30px;
+    border: 1px dashed #dcdcdc;
+}
+
+.wb.wb-edit-off .wb-interact-element {
+    pointer-events: none;
+}
+
+.wb.wb-edit-off .wb-interact-element .wb-interact-element-controls {
+    visibility: hidden;
+}
+
+.wb.wb-edit-off .wb-interact-element .wb-interact-element-value {
+    border: 1px dashed rgba(255, 255, 255, 0);
+}
+
+/*============================================*/
+
+.wb .wb-main-controls {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+}
+
+.wb .wb-main-controls .button {
+    width: 50px;
+    height: 50px;
+    margin: 0 25px 0 25px;
+}
+
+.wb .wb-main-controls .button {
+    width: 50px;
+    height: 50px;
+    margin: 0 25px 0 25px;
+}
+
+.wb .wb-main-controls .button:before {
+    content: '';
+    position: absolute;
+    top: -25px;
+    left: 2px;
+    width: 50px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 14px;
+    color: #888;
+    pointer-events: none;
+    font-family: monospace;
+}
+
+.wb .wb-main-controls .button svg {
+    fill: #888;
+    width: 50px;
+    height: 50px;
+}
+
+.wb .wb-main-controls .button.active svg {
+    fill: #000;
+}
+
+/*============================================*/
+
+.wb .wb-main-controls .wb-eraser-button:before {
+    content: 'E';
+}
+.wb .wb-main-controls .wb-draw-button:before {
+    content: 'D P';
+}
+.wb .wb-main-controls .wb-move-button:before {
+    content: 'I M';
+}
+
+.wb .wb-second-controls .wb-color-controls .color-1:after {
+    content: '1';
+}
+.wb .wb-second-controls .wb-color-controls .color-2:after {
+    content: '2';
+}
+.wb .wb-second-controls .wb-color-controls .color-3:after {
+    content: '3';
+}
+.wb .wb-second-controls .wb-color-controls .color-4:after {
+    content: '4';
+}
+.wb .wb-second-controls .wb-color-controls .color-5:after {
+    content: '5';
+}
+.wb .wb-second-controls .wb-color-controls .color-6:after {
+    content: '6';
+}
+.wb .wb-second-controls .wb-color-controls .color-7:after {
+    content: '7';
+}
+.wb .wb-second-controls .wb-color-controls .color-8:after {
+    content: '8';
+}
+
+.wb .wb-second-controls .wb-size-controls .wb-minus-button:after {
+    content: '[ -';
+}
+.wb .wb-second-controls .wb-size-controls .wb-plus-button:after {
+    content: '+ ]';
+}
+
+.wb .wb-second-controls .wb-trash-controls .wb-trash-button:after {
+    content: 'T';
+}
+
+.wb .wb-second-controls .wb-interact-controls .wb-add-font-button:after {
+    content: 'F';
+}
+.wb .wb-second-controls .wb-interact-controls .wb-add-math-button:after {
+    content: 'L';
+}

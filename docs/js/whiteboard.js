@@ -1040,7 +1040,11 @@ var Whiteboard = function(){
         state.canvasInMemory.width = elems.canvas.width;
         state.canvasInMemory.height = elems.canvas.height;
         state.canvasInMemoryCtx = state.canvasInMemory.getContext('2d');
-        state.canvasInMemoryCtx.drawImage( elems.canvas, 0, 0 );
+
+        // This needs work. For now we'll just lose the old canvas if an error happens.
+        try {
+            state.canvasInMemoryCtx.drawImage( elems.canvas, 0, 0, elems.canvas.width, elems.canvas.height );
+        }catch(e){}
 
         // Set the size of the whiteboard.
         elems.canvas.width  = elems.container.clientWidth;
