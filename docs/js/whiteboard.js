@@ -19,7 +19,7 @@
  *  Transforms an area of the page (or the whole page) into a web based whiteboard.
  *
  * @author Christopher Keers <source@caboodle.tech>
- * @version 1.0.0
+ * @version 1.0.2
  * @module Whiteboard
  */
 var Whiteboard = function(){
@@ -377,6 +377,15 @@ var Whiteboard = function(){
         elems.canvas.addEventListener( 'mouseover', mouseOver );
         elems.canvas.addEventListener( 'mouseup', mouseUp );
 
+        // Add whiteboard pointer listeners.
+        /*
+        elems.canvas.addEventListener( 'pointerdown', mouseDown );
+        elems.canvas.addEventListener( 'pointermove', mouseMove );
+        elems.canvas.addEventListener( 'pointerout', mouseOut );
+        elems.canvas.addEventListener( 'pointerover', mouseOver );
+        elems.canvas.addEventListener( 'pointerup', mouseUp );
+        */
+
         // Add whiteboard touch listeners.
         elems.canvas.addEventListener( 'touchstart', touchStart, { passive: true } );
         elems.canvas.addEventListener( 'touchend', touchEnd, { passive: true } );
@@ -657,6 +666,7 @@ var Whiteboard = function(){
      */
     var mouseOver = function(){
         state.hasFocus = true;
+        updateDimensions();
     };
 
     /**
@@ -1122,33 +1132,35 @@ var Whiteboard = function(){
      */
     var updateDimensions = function(){
 
-        // Record canvas' so we can redraw what they had.
-        state.canvasInMemory = document.createElement( 'CANVAS' );
-        state.canvasInMemory.width = elems.canvas.width;
-        state.canvasInMemory.height = elems.canvas.height;
-        state.canvasInMemoryCtx = state.canvasInMemory.getContext('2d');
+        if( state.hasFocus == true ){
+            // Record canvas' so we can redraw what they had.
+            state.canvasInMemory = document.createElement( 'CANVAS' );
+            state.canvasInMemory.width = elems.canvas.width;
+            state.canvasInMemory.height = elems.canvas.height;
+            state.canvasInMemoryCtx = state.canvasInMemory.getContext('2d');
 
-        // This needs work. For now we'll just lose the old canvas if an error happens.
-        try {
-            state.canvasInMemoryCtx.drawImage( elems.canvas, 0, 0, elems.canvas.width, elems.canvas.height );
-        }catch(e){}
+            // This needs work. For now we'll just lose the old canvas if an error happens.
+            try {
+                state.canvasInMemoryCtx.drawImage( elems.canvas, 0, 0, elems.canvas.width, elems.canvas.height );
+            }catch(e){}
 
-        // Set the size of the whiteboard.
-        elems.canvas.width  = elems.container.clientWidth;
-        elems.canvas.height = elems.container.clientHeight;
-        elems.ctx.drawImage( state.canvasInMemory, 0, 0 );
+            // Set the size of the whiteboard.
+            elems.canvas.width  = elems.container.clientWidth;
+            elems.canvas.height = elems.container.clientHeight;
+            elems.ctx.drawImage( state.canvasInMemory, 0, 0 );
 
-        // Set the location of the color picker.
-        elems.wheelCanvas.style.left = ( ( elems.container.clientWidth / 2 ) - 150 ) + 'px';
-        elems.colorResult.style.left = ( ( elems.container.clientWidth / 2 ) - 175 ) + 'px';
+            // Set the location of the color picker.
+            elems.wheelCanvas.style.left = ( ( elems.container.clientWidth / 2 ) - 150 ) + 'px';
+            elems.colorResult.style.left = ( ( elems.container.clientWidth / 2 ) - 175 ) + 'px';
 
-        // Set the size and location of the interactive area.
-        var width = elems.container.clientWidth / 2.5;
-        var height = elems.container.clientHeight / 2.5;
-        elems.interactiveArea.style.width = width + 'px';
-        elems.interactiveArea.style.height = height + 'px';
-        elems.interactiveArea.style.left = ( ( elems.container.clientWidth / 2 ) - width / 2 ) + 'px';
-        elems.interactiveArea.style.top = ( ( elems.container.clientHeight / 2 ) - height / 2 ) + 'px';
+            // Set the size and location of the interactive area.
+            var width = elems.container.clientWidth / 2.5;
+            var height = elems.container.clientHeight / 2.5;
+            elems.interactiveArea.style.width = width + 'px';
+            elems.interactiveArea.style.height = height + 'px';
+            elems.interactiveArea.style.left = ( ( elems.container.clientWidth / 2 ) - width / 2 ) + 'px';
+            elems.interactiveArea.style.top = ( ( elems.container.clientHeight / 2 ) - height / 2 ) + 'px';
+        }
     };
 
     var module = {
